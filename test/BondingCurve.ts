@@ -34,9 +34,12 @@ describe("Setup Admin and Unnamed Accounts", function () {
             const BondingCurve: Artifact = await hre.artifacts.readArtifact("BondingCurve");
             this.BondingCurve = await deployContract(this.signers.admin, BondingCurve);
             console.log(`Deployed BondingCurve to the following address => ${this.BondingCurve.address}`);            
-            process.stdout.write("\n");
+            process.stdout.write("\n");            
         });
         
+        // it("should generate supplemental information", function () => {            });
+        
+
         shouldBehaveLikeBondingCurveToken();
     });
 });

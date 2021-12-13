@@ -5,6 +5,8 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 
+const zero_token = "0x0000000000000000000000000000000000000000";
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const keys = async (obj: any) => {
     Object.keys(obj).toString().split(`,`).forEach(p => { process.stdout.write(`${p}` + `\n`); })
@@ -87,21 +89,21 @@ export function shouldBehaveLikeBondingCurveToken(): void {
     
     it("should add collateral token to BondingCurve - addCollateralToken", async function() {        
         await this.BondingCurve.addCollateralToken(
-            "0x0000000000000000000000000000000000000000",
+            zero_token,
             2000000000000,
-            2000000000000,
-            1000,
+            1000000000000,    
+            100,        
         );
-        const collateral_token = await this.BondingCurve.collaterals("0x0000000000000000000000000000000000000000");
-        console.log(`collateral token ${collateral_token}`);
+        const collateral_token = await this.BondingCurve.collaterals(zero_token);
+        console.log(`collateral token (0) ${collateral_token}`);                
     });
 
     it("should make buy order to BondingCurve - makeBuyOrder", async function () {
-
+        console.log(`implementation required`);
     });
 
     it("should make sell order to BondingCurve - makeSellOrder", async function () {
-
+        console.log(`implementation required`);
     });
 
     it("should display other unnamed addresses and balances", async function () {        
