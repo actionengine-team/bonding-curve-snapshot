@@ -99,11 +99,20 @@ export function shouldBehaveLikeBondingCurveToken(): void {
     });
 
     it("should make buy order to BondingCurve - makeBuyOrder", async function () {
-        console.log(`implementation required`);
+        console.log(`using all the hardhat signers, buy smallest increment tokens and print out the token price`);
     });
 
     it("should make sell order to BondingCurve - makeSellOrder", async function () {
-        console.log(`implementation required`);
+        console.log(`using some percentage of individuals, from common-stack, demonstrate various sell orderes`);
+    });
+
+    it("should also distribute a token across ./example-data/example.csv", async function () {
+        console.log(`using example.csv, distribute tokens across the curve`);
+    });
+
+    it("should update ./snapshot/index to store the block number, timestamp with the address and amount contributed", 
+        async function () {
+        console.log(`using the updated example.csv, distribute tokens across the curve`);
     });
 
     it("should display other unnamed addresses and balances", async function () {        
