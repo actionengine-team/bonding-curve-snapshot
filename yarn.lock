@@ -2762,6 +2762,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^0.24.0":
+  version: 0.24.0
+  resolution: "axios@npm:0.24.0"
+  dependencies:
+    follow-redirects: ^1.14.4
+  checksum: e741dfea07def55be7b1082824d71f54f7859b9c3c75a86c6a74b91c6e48bb461aceac683f77867313f89ff40ef5f2d1d2a1fe1953fcb71bdc1c1fc0fc069925
+  languageName: node
+  linkType: hard
+
 "babel-code-frame@npm:^6.26.0":
   version: 6.26.0
   resolution: "babel-code-frame@npm:6.26.0"
@@ -3581,6 +3590,7 @@ __metadata:
     "@types/node": ^15.6.1
     "@typescript-eslint/eslint-plugin": ^4.25.0
     "@typescript-eslint/parser": ^4.25.0
+    axios: ^0.24.0
     chai: ^4.3.4
     child_process: ^1.0.2
     commitizen: ^4.2.4
@@ -3593,7 +3603,7 @@ __metadata:
     eslint-config-prettier: ^8.3.0
     ethereum-waffle: ^3.3.0
     ethers: ^5.5.2
-    fs: ^0.0.1-security
+    eventemitter3: ^4.0.7
     fs-extra: ^10.0.0
     glob: ^7.1.7
     hardhat: ^2.3.0
@@ -6553,6 +6563,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eventemitter3@npm:^4.0.7":
+  version: 4.0.7
+  resolution: "eventemitter3@npm:4.0.7"
+  checksum: 1fc12c7bc3b4194c50975827e72d56ff57c32b75a4c7dbf4d5eebf3c8371f6f1aad6799150b609de1b867c0d8a9885c08b6ca5e7e0dc437d6152f3063b2607dd
+  languageName: node
+  linkType: hard
+
 "events@npm:^3.0.0":
   version: 3.3.0
   resolution: "events@npm:3.3.0"
@@ -7088,6 +7105,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"follow-redirects@npm:^1.14.4":
+  version: 1.14.6
+  resolution: "follow-redirects@npm:1.14.6"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: 36636ef3b21193e0b8aec8a4ab7ef55c3eafb6d15f02adbf672701565a999efddd241d1ae5ce274842fe867a9da4cfe1404794988b8294df9067619c61830f58
+  languageName: node
+  linkType: hard
+
 "for-each@npm:^0.3.3, for-each@npm:~0.3.3":
   version: 0.3.3
   resolution: "for-each@npm:0.3.3"
@@ -7286,13 +7313,6 @@ __metadata:
   version: 1.0.0
   resolution: "fs.realpath@npm:1.0.0"
   checksum: 698a91b1695e3926185c9e5b0dd57cf687dceb4eb73799af91e6b2ab741735e2962c366c5af6403ffddae2619914193bd339efa706fdc984d0ffc74b7a3603f4
-  languageName: node
-  linkType: hard
-
-"fs@npm:^0.0.1-security":
-  version: 0.0.1-security
-  resolution: "fs@npm:0.0.1-security"
-  checksum: d23d3c0dd42fd11508e5f8d265375c676816adf398f61bfc3e2635e6e8ca323fd1f530d5dd5f87e4fca54296efb5ddf8a382b99f1ac243ac0a8b4b1cae8f5fac
   languageName: node
   linkType: hard
 

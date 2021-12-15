@@ -2,3 +2,4 @@
 
 ## Attribution
 [augmented bonding curve](https://github.com/atsignhandle/augmented-bonding-curve)
+[merkle distributor](https://github.com/Uniswap/merkle-distributor)

@@ -1,24 +1,24 @@
+import * as moment from 'moment';
 import { ethers } from 'ethers';
 import { formatEther } from '@ethersproject/units';
 import { parse, stringify } from 'csv/sync';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { PQueue } from '../p-queue';
-import { logger } from '../utils';
+import { logger, sixteen_char_date } from '../utils';
 import { environment } from '../environment';
 import { CEX_OVERRIDES } from '../example-data/cex-overrides';
 
 const {
   NODE_ENV,
   PROVIDER_ENDPOINT,
-  // SAFE_ADDRESS,
+  SAFE_ADDRESS,
   // SAFE_DEPLOYED_IN_BLOCK,
   BLOCKS_PER_CHUNK,
   AUCTION_ENDED_IN_BLOCK,
   SNAPSHOT_FILENAME,
 } = environment;
 
-const SAFE_DEPLOYED_IN_BLOCK = 9360414;
-const SAFE_ADDRESS = `0x6b175474e89094c44da98b954eedeac495271d0f`;
+const SAFE_DEPLOYED_IN_BLOCK = '9360414';
 logger.info(`${NODE_ENV}, ${SAFE_ADDRESS}, ${SAFE_DEPLOYED_IN_BLOCK}`);
 logger.info(
   `development and testing used DAI addresses, ` + 
@@ -68,18 +68,20 @@ async function main() {
     `searching blocks ${Number(SAFE_DEPLOYED_IN_BLOCK)} ` +
       `through ${block_height} for ${transfer_event}`,
   );
+  
   for (
-    let i = Number(SAFE_DEPLOYED_IN_BLOCK);
+    let i = Number(SAFE_DEPLOYED_IN_BLOCK);    
     i < Number(block_height);
     i = i + Number(BLOCKS_PER_CHUNK)
   ) {
     const fromChunkNumber = i;
     const toBlock = Number(await provider.getBlockNumber());
     const toChunkNumber = Math.min(fromChunkNumber + BLOCKS_PER_CHUNK - 1, toBlock);
-    const events = await safe.queryFilter(filter, fromChunkNumber, toChunkNumber);
+    const { timestamp } = await provider.getBlock(toChunkNumber);    
+    const events = await safe.queryFilter(filter, fromChunkNumber, toChunkNumber);    
     events.filter(Boolean).forEach((event: any) => {
       logger.info(
-        `(${event.blockNumber}), ${ethers.utils.formatEther(
+        `(${event.blockNumber}) (${sixteen_char_date(new Date(timestamp * 1000))}), ${ethers.utils.formatEther(
           ethers.BigNumber.from(event.args.val),
         )} ETH, ${event.args}, ${event.eventSignature}`,
       );

@@ -81,10 +81,11 @@
     "@ethersproject/units": "^5.5.0",
     "@openzeppelin/contracts": "^4.4.0",
     "@openzeppelin/contracts-upgradeable": "^4.4.0",
+    "axios": "^0.24.0",
     "child_process": "^1.0.2",
     "csv": "^6.0.4",
     "envalid": "^7.2.2",
-    "fs": "^0.0.1-security",
+    "eventemitter3": "^4.0.7",
     "glob": "^7.1.7",
     "moment": "^2.29.1",
     "winston": "^3.3.3"
