@@ -73,14 +73,10 @@ export function shouldBehaveLikeBondingCurveToken(): void {
     })
 
     it("should initialize BondingCurve - initializeCurve", async function () {                
-        await this.BondingCurve.initializeCurve(
-                this.BondingCurveToken.address, 
-                this.BancorFormula.address, 
-                this.BondingCurveVault.address,
-                this.signers.admin.address,
-                10,
-                10,
-                );        
+        // await this.BondingCurve.initializeCurve(
+        //     this.BancorFormula.address,
+
+        //         );        
         const buy_fee_percent = await this.BondingCurve.buyFeePct();        
         console.log(`buy fee % verification ${buy_fee_percent}`);
         const sell_fee_percent = await this.BondingCurve.sellFeePct();        
