@@ -2133,6 +2133,37 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@uniswap/lib@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@uniswap/lib@npm:1.1.1"
+  checksum: ee80fdc930b63339b2d6fb6ea58b74a913942f238294b66c815666c93ebaba536fb9628147325892957fa479104149fc8e935faa0d62d9dcb7193c54e5cd34cf
+  languageName: node
+  linkType: hard
+
+"@uniswap/v2-core@npm:1.0.0":
+  version: 1.0.0
+  resolution: "@uniswap/v2-core@npm:1.0.0"
+  checksum: 616c8a32ccf25db1b8d5708c2fc7f66795a4ff226d3a2268a97573534aab73e4f59f8f07cc5ae820852a7dfb8e9f23b856b8f443afdee65cd09f931ec9b58cda
+  languageName: node
+  linkType: hard
+
+"@uniswap/v2-periphery@npm:^1.1.0-beta.0":
+  version: 1.1.0-beta.0
+  resolution: "@uniswap/v2-periphery@npm:1.1.0-beta.0"
+  dependencies:
+    "@uniswap/lib": 1.1.1
+    "@uniswap/v2-core": 1.0.0
+  checksum: fcfe52df7cf410738cde25684585cc454cd879f245b671b2686e65a3ffd7c109cbb0bbb89f82a04fe1d08711481f9c91a350ab8bc92b645dd99f1d58a1a18d8b
+  languageName: node
+  linkType: hard
+
+"@uniswap/v3-core@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@uniswap/v3-core@npm:1.0.0"
+  checksum: 594f6fb2959c24e2e98e2db95223d52da6b7a81a1d9e0ae002450c2ce8756972c11c6afd58f9331080248d6582f691e0b320840e59aef586d92165d5bce430d0
+  languageName: node
+  linkType: hard
+
 "@yarnpkg/lockfile@npm:^1.1.0":
   version: 1.1.0
   resolution: "@yarnpkg/lockfile@npm:1.1.0"
@@ -3581,6 +3612,8 @@ __metadata:
     "@types/node": ^15.6.1
     "@typescript-eslint/eslint-plugin": ^4.25.0
     "@typescript-eslint/parser": ^4.25.0
+    "@uniswap/v2-periphery": ^1.1.0-beta.0
+    "@uniswap/v3-core": ^1.0.0
     chai: ^4.3.4
     child_process: ^1.0.2
     commitizen: ^4.2.4
