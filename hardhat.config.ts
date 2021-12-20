@@ -65,14 +65,18 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
+      forking: {
+        url: `https://eth-mainnet.alchemyapi.io/v2/${process.env.MAINNET_ALCHEMY_API_KEY}`,
+        blockNumber: 13842627
+      },
       accounts: {
         mnemonic: PRIVATE_MNEMONIC,
       },
       chainId: chainIds.hardhat,
     },        
-    rinkeby: createConfig('rinkeby'),
-    koban: createConfig('kovan'),
-    mainnet: createConfig('mainnet'),
+    // rinkeby: createConfig('rinkeby'),
+    // koban: createConfig('kovan'),
+    // mainnet: createConfig('mainnet'),
   },
   solidity: {
     compilers: [
