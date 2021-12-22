@@ -2,8 +2,11 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import hre from "hardhat";
 import { expect } from "chai";
-import { BigNumber } from "ethers";
+import { BigNumber, BigNumberish, ContractReceipt } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
+import { hexToAscii, sha3, toBN, fromWei, toWei } from "web3-utils";
+import { doesNotMatch } from "assert";
+import { fstat , writeFileSync} from "fs";
 
 const zero_token = "0x0000000000000000000000000000000000000000";
 
@@ -40,15 +43,26 @@ const advanceTimeAndBlock = async function (time: number) {
         `\t` + `current block time:${currentBlockTime} => adv block time:${newBlockTime}` + `\n`);
 };
 
+const advanceTime = async (time : number) => {
+    
+        await hre.ethers.provider.send(
+            "evm_increaseTime",
+            [time]
+        )
+
+        await hre.ethers.provider.send(
+            "evm_mine", [] )
+
+
+  
+    return true;
+  };
+
 export function shouldBehaveLikeBondingCurveToken(): void {
-    it("should return BondingCurveToken contract constructor initial state", async function () {    
-        const BondingCurveTokenAddress = await this.BondingCurveToken.address;
-        const BondingCurveTokenBalance: BigNumber = await hre.ethers.provider.getBalance(BondingCurveTokenAddress);
-        process.stdout.write(`Deployed Bonding Curve Token balance => ` +
-            `${await this.BondingCurveToken.address}: ${BondingCurveTokenBalance} (wei)` + `\n`);                 
-        expect(await this.BondingCurveToken.address);
-        expect(BondingCurveTokenBalance).to.equal(0);           
-    });
+
+    const transactions : [number, number, string, string, number][] = [];
+    let capasitor = 0;
+
 
     it("should return BancorFormula contract constructor initial state", async function () {
         const BancorFormulaAddress = await this.BancorFormula.address;
@@ -57,12 +71,6 @@ export function shouldBehaveLikeBondingCurveToken(): void {
             `${await this.BancorFormula.address}: ${BancorFormulaBalance} (wei)` + `\n`);
     });
 
-    it("should return BondCurveVault contract constructor initial state", async function () {
-        const BondingCurveVaultAddress = await this.BondingCurveVault.address;
-        const BondingCurveVaultBalance: BigNumber = await hre.ethers.provider.getBalance(BondingCurveVaultAddress);            
-        process.stdout.write(`Deployed Bonding Curve Vault balance => ` +
-            `${await this.BondingCurveVault.address}: ${BondingCurveVaultBalance} (wei)` + `\n`);  
-    });
 
     it("should return BondingCurve contract constructor initial state", async function () {
         const BondingCurveAddress = await this.BondingCurve.address;
@@ -72,29 +80,87 @@ export function shouldBehaveLikeBondingCurveToken(): void {
             `${await this.BondingCurve.address}: ${BondingCurveBalance} (wei)` + `\n`);
     })
 
-    it("should initialize BondingCurve - initializeCurve", async function () {                
-        // await this.BondingCurve.initializeCurve(
-        //     this.BancorFormula.address,
+    it("should initialize BondingCurve - initializeCurve", async function () {   
+        const currentBlockNum = await hre.ethers.provider.getBlockNumber();
+        const currentBlock = await hre.ethers.provider.getBlock(currentBlockNum);
+        const { hash, parentHash, number, timestamp, nonce, difficulty, gasLimit, gasUsed, miner, extraData, transactions } = currentBlock;
+        
 
-        //         );        
+        await this.BondingCurve.initialize(this.DaoRegistry.address, this.signers.admin.address);
+        await this.BondingCurve.initializeCurve(
+           this.BancorFormula.address, // _formula
+           this.DaoRegistry.address,// _movement
+            this.Endowment.address, // _endowment
+            toWei('1'), // _intiative_goal
+            this.Endowment.address, //_beneficiary
+            "100", // _buyFeePct
+            "100", // _sellFeePct
+            timestamp + 1000, // _timeStart
+            timestamp + 100000, // _timeCooldown
+            timestamp + 10000000 // _timeEnd
+        );
+    
         const buy_fee_percent = await this.BondingCurve.buyFeePct();        
         console.log(`buy fee % verification ${buy_fee_percent}`);
         const sell_fee_percent = await this.BondingCurve.sellFeePct();        
-        console.log(`sell fee % verification ${sell_fee_percent}`);        
+        console.log(`sell fee % verification ${sell_fee_percent}`);         
     });
     
     it("should add collateral token to BondingCurve - addCollateralToken", async function() {        
         await this.BondingCurve.addCollateralToken(
             zero_token,
-            2000000000000,
-            1000000000000,    
-            100,        
+            toWei('0.02'),
+            toWei('0.01'), 
+            "90000",
         );
         const collateral_token = await this.BondingCurve.collaterals(zero_token);
         console.log(`collateral token (0) ${collateral_token}`);                
     });
 
     it("should make buy order to BondingCurve - makeBuyOrder", async function () {
+        this.timeout(4 * 60 * 1000)
+
+
+        
+        await advanceTime(10000);
+for (let index = 0; index < this.unnamedAccounts.length * 10; index++) {
+const account  = this.unnamedAccounts[index % this.unnamedAccounts.length];
+
+
+    const byed =  await this.BondingCurve.connect(account).makeBuyOrder(
+        account.address,
+        zero_token,
+         toWei('0.001'),
+        "100",
+        {
+            value: toWei('0.001')
+        }
+    );
+
+
+    let receipt = (await byed.wait()).events?.filter((x) => {return x.event == "MakeBuyOrder"})[0].args;
+    const returnedAmount = fromWei( receipt?.returnedAmount.toString());
+    const purchaseAmount = fromWei( receipt?.purchaseAmount.toString());
+    const exchangeRate = +purchaseAmount / +returnedAmount
+    capasitor += +returnedAmount
+
+    transactions.push([index , exchangeRate, returnedAmount , purchaseAmount, capasitor])
+    console.log(transactions[transactions.length - 1]);
+    
+   
+}
+        
+    const lineArray : string[] = [];
+    transactions.forEach(function (infoArray) {
+    var line = infoArray.join(",");
+    lineArray.push(line);
+    });
+    var csvContent = lineArray.join("\n");
+      
+    writeFileSync('testData.csv',  csvContent) 
+        
+        
+        
         console.log(`using all the hardhat signers, buy smallest increment tokens and print out the token price`);
     });
 

@@ -3,7 +3,7 @@ import { BigNumber } from "ethers";
 import { Artifact } from "hardhat/types";
 import { Signers } from "../types";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
-import type {DaoFactory, BondingCurveToken, BondingCurveVault, BancorFormula, BondingCurve , Endowment} from '../typechain';
+import type {DaoFactory, BondingCurveToken, BondingCurveVault, BancorFormula, BondingCurve , Endowment, DaoRegistry} from '../typechain';
 import { shouldBehaveLikeBondingCurveToken } from "./BondingCurve.behavior";
 
 const { deployContract } = hre.waffle;
@@ -21,18 +21,11 @@ describe("Setup Admin and Unnamed Accounts", function () {
     });
 
     describe("BondingCurve - initialization", function () {
-        before(async function () {    
-            const BondingCurveToken: Artifact = await hre.artifacts.readArtifact("BondingCurveToken");            
-            this.BondingCurveToken = await deployContract(this.signers.admin, BondingCurveToken) as BondingCurveToken; 
-            console.log(`Deployed Tokens to the following address => ${this.BondingCurveToken.address}`);                                    
-            
-            const BancorFormula: Artifact = await hre.artifacts.readArtifact("BancorFormula");
+        before(async function () {                                 
+                    const BancorFormula: Artifact = await hre.artifacts.readArtifact("BancorFormula");
             this.BancorFormula = await deployContract(this.signers.admin, BancorFormula) as BancorFormula;
             console.log(`Deployed BancorFormula to the following address => ${this.BancorFormula.address}`);            
-            
-            const BondingCurveVault: Artifact = await hre.artifacts.readArtifact("BondingCurveVault");
-            this.BondingCurveVault = await deployContract(this.signers.admin, BondingCurveVault) as BondingCurveVault;
-            console.log(`Deployed BondingCurveVault to the following address => ${this.BondingCurveVault.address}`);                        
+                             
             
             const BondingCurve: Artifact = await hre.artifacts.readArtifact("BondingCurve");
             this.BondingCurve = await deployContract(this.signers.admin, BondingCurve) as BondingCurve;
@@ -42,16 +35,9 @@ describe("Setup Admin and Unnamed Accounts", function () {
             this.Endowment = await deployContract(this.signers.admin, Endowment) as Endowment;
             console.log(`Deployed Endowment to the following address => ${this.Endowment.address}`);
             
-            // const DaoFactory : Artifact = await hre.artifacts.readArtifact('DaoFactory');
-            // const deployedDaoFactory = await deployContract(await this.unnamedAccounts[0], DaoFactory, ["test"] ) as DaoFactory;    
-            // console.log(`Deployed deployedDaoFactory to the following address => ${deployedDaoFactory.address}`);
- 
-
-            // await deployedDaoFactory.createDao('TEST', this.signers.admin.address);
-            
-            // const OPA = await deployedDaoFactory.getDaoAddress('TEST');
-            // console.log(`Deployed DAO to the following address => ${OPA}`);
-
+            const DaoRegistry: Artifact = await hre.artifacts.readArtifact('DaoRegistry');
+            this.DaoRegistry = await deployContract(this.signers.admin, DaoRegistry) as DaoRegistry;
+            console.log(`Deployed DaoRegistry to the following address => ${this.DaoRegistry.address}`);
 
             process.stdout.write("\n");            
         });
