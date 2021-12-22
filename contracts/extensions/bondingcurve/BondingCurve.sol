@@ -76,7 +76,12 @@ contract BondingCurve is
     }
 
     modifier timeSell {
-        uint256 _amount = IERC20(_collaterals[0]).balanceOf(address(reserve));
+        uint256 _amount;
+        if (_collaterals[0] == ETH) {
+            _amount = address(reserve).balance;
+        }else {
+           _amount = IERC20(_collaterals[0]).balanceOf(address(reserve));
+        }
         require(block.timestamp >= timeStart && (block.timestamp < timeEnd || _amount < funding_goal), ERROR_BAD_TIMES);
         _;
     }
@@ -455,10 +460,18 @@ contract BondingCurve is
         bondingToken.burn(_seller, _sellAmount);
 
         if (returnAmountLessFee > 0) {
-            reserve.transfer(_collateral, _seller, returnAmountLessFee);
+            if (_collateral == ETH) {
+                reserve.transferETH(_seller, returnAmountLessFee);
+            } else {
+                reserve.transfer(_collateral, _seller, returnAmountLessFee);
+            }
         }
         if (fee > 0) {
-            reserve.transfer(_collateral, beneficiary, fee);
+            if (_collateral == ETH) {
+                reserve.transferETH(beneficiary, returnAmountLessFee);
+            } else {
+               reserve.transfer(_collateral, beneficiary, fee);
+            }
         }
 
         emit MakeSellOrder(_seller, _collateral, fee, _sellAmount, returnAmountLessFee, sellFeePct);

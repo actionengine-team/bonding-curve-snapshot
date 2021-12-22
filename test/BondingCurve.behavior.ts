@@ -148,6 +148,41 @@ const account  = this.unnamedAccounts[index % this.unnamedAccounts.length];
     console.log(transactions[transactions.length - 1]);
     
    
+}           
+        console.log(`using all the hardhat signers, buy smallest increment tokens and print out the token price`);
+    });
+
+    it("should make sell order to BondingCurve - makeSellOrder", async function () {
+        this.timeout(4 * 60 * 1000)
+
+
+        
+        await advanceTime(10000);
+for (let index = 0; index < this.unnamedAccounts.length * 10; index++) {
+const account  = this.unnamedAccounts[index % this.unnamedAccounts.length];
+
+
+    const byed =  await this.BondingCurve.connect(account).makeSellOrder(
+        account.address,
+        zero_token,
+        toWei('0.00001'),
+        "10",
+    );
+
+
+    let receipt = (await byed.wait()).events?.filter((x) => {return x.event == "MakeSellOrder"})[0].args;
+
+    console.log(JSON.stringify(receipt, null, 2));
+    
+    const returnedAmountETH = fromWei( receipt?.returnedAmount.toString());
+    const sellAmount = fromWei( receipt?.sellAmount.toString());
+    const exchangeRate = +returnedAmountETH / +sellAmount
+    capasitor -= +sellAmount
+
+    transactions.push([index , exchangeRate , sellAmount, returnedAmountETH , capasitor])
+    console.log(transactions[transactions.length - 1]);
+    
+   
 }
         
     const lineArray : string[] = [];
@@ -158,14 +193,7 @@ const account  = this.unnamedAccounts[index % this.unnamedAccounts.length];
     var csvContent = lineArray.join("\n");
       
     writeFileSync('testData.csv',  csvContent) 
-        
-        
-        
-        console.log(`using all the hardhat signers, buy smallest increment tokens and print out the token price`);
-    });
-
-    it("should make sell order to BondingCurve - makeSellOrder", async function () {
-        console.log(`using some percentage of individuals, from common-stack, demonstrate various sell orderes`);
+       console.log(`using some percentage of individuals, from common-stack, demonstrate various sell orderes`);
     });
 
     it("should also distribute a token across ./example-data/example.csv", async function () {
