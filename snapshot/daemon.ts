@@ -18,13 +18,13 @@ const {
 } = environment;
 
 const SAFE_DEPLOYED_IN_BLOCK = 9360414;
-const SAFE_ADDRESS = `0x6b175474e89094c44da98b954eedeac495271d0f`;
+const SAFE_ADDRESS = '0x6b175474e89094c44da98b954eedeac495271d0f';
 logger.info(`${NODE_ENV}, ${SAFE_ADDRESS}, ${SAFE_DEPLOYED_IN_BLOCK}`);
 logger.info(
-  `development and testing used DAI addresses, ` + 
-  `deployed version to use address of interest and block range of interest`,
+  'development and testing used DAI addresses, ' +
+  'deployed version to use address of interest and block range of interest'
 );
-logger.info(`with the final or current block watched`);
+logger.info('with the final or current block watched');
 
 const provider = new ethers.providers.JsonRpcProvider(PROVIDER_ENDPOINT as string);
 const verbosity = environment.VERBOSE;
@@ -32,7 +32,7 @@ const verbosity = environment.VERBOSE;
 const event_concurrency = 1;
 const process_queue = new PQueue({ concurrency: event_concurrency });
 
-const transfer_event = `event Transfer(address indexed src, address indexed dst, uint val)`;
+const transfer_event = 'event Transfer(address indexed src, address indexed dst, uint val)';
 const safe = new ethers.Contract(SAFE_ADDRESS, [transfer_event], provider);
 
 type Snapshot = Record<string, ethers.BigNumber>;
@@ -59,14 +59,14 @@ process.on('SIGINT', () => {
   process.exit();
 });
 
-async function main() {
-  logger.info(`parse the output and serialize, so that it can be looked up by another process`);
+async function main () {
+  logger.info('parse the output and serialize, so that it can be looked up by another process');
   await getNetworkStatus(provider);
   const filter = safe.filters.Transfer();
   block_height = Number(await provider.getBlockNumber());
   logger.info(
     `searching blocks ${Number(SAFE_DEPLOYED_IN_BLOCK)} ` +
-      `through ${block_height} for ${transfer_event}`,
+      `through ${block_height} for ${transfer_event}`
   );
   for (
     let i = Number(SAFE_DEPLOYED_IN_BLOCK);
@@ -80,8 +80,8 @@ async function main() {
     events.filter(Boolean).forEach((event: any) => {
       logger.info(
         `(${event.blockNumber}), ${ethers.utils.formatEther(
-          ethers.BigNumber.from(event.args.val),
-        )} ETH, ${event.args}, ${event.eventSignature}`,
+          ethers.BigNumber.from(event.args.val)
+        )} ETH, ${event.args}, ${event.eventSignature}`
       );
     });
   }
