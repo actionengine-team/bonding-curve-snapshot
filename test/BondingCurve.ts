@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import hre from 'hardhat';
 import { Artifact } from 'hardhat/types';
 import { Signers } from '../types';

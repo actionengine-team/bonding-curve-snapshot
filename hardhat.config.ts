@@ -70,7 +70,7 @@ const config: HardhatUserConfig = {
       },
       accounts: {
         mnemonic: PRIVATE_MNEMONIC,
-        count: 1600,
+        count: 160,
         accountsBalance: '1000000000000000000000',
       },
       chainId: chainIds.hardhat,

@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable no-undef */
 import hre from 'hardhat';
 import { expect } from 'chai';
 import { BigNumber } from 'ethers';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-with-address';
 import { writeFileSync } from 'fs';
 import { randomInt } from 'crypto';
-import { toWei, fromWei } from 'web3-utils';
+import { toWei, fromWei, toBN } from 'web3-utils';
 
 const ZERO_TOKEN = '0x0000000000000000000000000000000000000000';
 
@@ -116,7 +117,7 @@ export function shouldBehaveLikeBondingCurveToken (): void {
 
       const amount = toWei((randomInt(1, 1000) / 100000).toString());
 
-      console.log(account.address, 'Buy ', fromWei(amount), 'ETH');
+      console.log(account.address, 'buy tokens using', fromWei(amount), 'ETH');
 
       const byed = await this.BondingCurve.connect(account).makeBuyOrder(
         account.address,
@@ -136,8 +137,7 @@ export function shouldBehaveLikeBondingCurveToken (): void {
       const exchangeRate = +purchaseAmount / +returnedAmount;
       capasitor += +returnedAmount;
 
-      // @ts-expect-error
-      account.bondingTokenBalance = returnedAmount;
+      account.bondingTokenBalance = toBN(receipt?.returnedAmount.toString());
 
       transactions.push([
         index,
@@ -164,20 +164,12 @@ export function shouldBehaveLikeBondingCurveToken (): void {
 
       const sellBondingTokenAmount = Math.round(
         // @ts-expect-error
-        toWei(account.bondingTokenBalance) / 10
+        account.bondingTokenBalance / 3
       ).toString();
-      // @ts-expect-error
-      account.bondingTokenBalance = fromWei(sellBondingTokenAmount);
       console.log(
         'sellBondingTokenAmount: TOKEN ',
         fromWei(sellBondingTokenAmount)
       );
-
-      const test = await this.BondingCurve.connect(account).evaluateSellOrder(
-        ZERO_TOKEN,
-        sellBondingTokenAmount
-      );
-      console.log('evaluateSellOrder: ETH ', fromWei(test.toString()));
 
       try {
         const byed = await this.BondingCurve.connect(account).makeSellOrder(
@@ -195,6 +187,9 @@ export function shouldBehaveLikeBondingCurveToken (): void {
         const sellAmount = fromWei(receipt?.sellAmount.toString());
         const exchangeRate = +returnedAmountETH / +sellAmount;
         capasitor -= +sellAmount;
+
+        // @ts-expect-error
+        account.bondingTokenBalance = account.bondingTokenBalance - toBN(receipt?.sellAmount.toString());
 
         transactions.push([
           index,
@@ -259,15 +254,24 @@ export function shouldBehaveLikeBondingCurveToken (): void {
         `${await ad.address}:${await ad.getBalance()}` +
         '\n'
     );
-    // for (let i = 0; i < this.unnamedAccounts.length; i++) {
-    //   const a: SignerWithAddress = this.unnamedAccounts[i];
-    // if (i == 2) {
-    //     process.stdout.write(`(${i})` + `\t` +
-    //     `${await a.address}:${await a.getBalance()}` + `\n`);
-    // } else {
-    //     process.stdout.write(`(${i})` + `\t` +
-    //     `${await a.address}:${await a.getBalance()}` + `\n`);
-    // }
-    // }
+
+    const accounts = [['Addres', 'ETH', 'TOKENS']];
+
+    for (let i = 0; i < this.unnamedAccounts.length; i++) {
+      const a = this.unnamedAccounts[i];
+      // @ts-expect-error
+      process.stdout.write(`(${i})` + '\t' + `${await a.address} ETH:${fromWei((await a.getBalance()).toString())}, TOKENS:${fromWei(a.bondingTokenBalance?.toString())}` + '\n');
+      // @ts-expect-error
+      accounts.push([a.address, fromWei((await a.getBalance()).toString()), fromWei(a.bondingTokenBalance?.toString())]);
+    }
+
+    const lineArray: string[] = [];
+    accounts.forEach(function (infoArray) {
+      const line = infoArray.join(',');
+      lineArray.push(line);
+    });
+    const csvContent = lineArray.join('\n');
+
+    writeFileSync('accountsData.csv', csvContent);
   });
 }
