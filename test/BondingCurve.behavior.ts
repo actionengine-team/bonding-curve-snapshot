@@ -36,9 +36,7 @@ export const getRandomInt = (max: number): number => {
 
 const advanceTime = async (time: number) => {
   await hre.ethers.provider.send('evm_increaseTime', [time]);
-
   await hre.ethers.provider.send('evm_mine', []);
-
   return true;
 };
 
@@ -84,8 +82,8 @@ export function shouldBehaveLikeBondingCurveToken (): void {
       this.Endowment.address, // _endowment
       toWei('1'), // _intiative_goal
       this.Endowment.address, // _beneficiary
-      '100', // _buyFeePct
-      '100', // _sellFeePct
+      '0', // _buyFeePct
+      '0', // _sellFeePct
       timestamp + 1000, // _timeStart
       timestamp + 100000, // _timeCooldown
       timestamp + 10000000 // _timeEnd
@@ -110,15 +108,11 @@ export function shouldBehaveLikeBondingCurveToken (): void {
 
   it('should make buy order to BondingCurve - makeBuyOrder', async function () {
     this.timeout(60 * 60 * 1000);
-
     await advanceTime(10000);
     for (let index = 0; index < this.unnamedAccounts.length; index++) {
       const account = this.unnamedAccounts[index % this.unnamedAccounts.length];
-
       const amount = toWei((randomInt(1, 1000) / 100000).toString());
-
       console.log(account.address, 'buy tokens using', fromWei(amount), 'ETH');
-
       const byed = await this.BondingCurve.connect(account).makeBuyOrder(
         account.address,
         ZERO_TOKEN,
@@ -136,9 +130,7 @@ export function shouldBehaveLikeBondingCurveToken (): void {
       const purchaseAmount = fromWei(receipt?.purchaseAmount.toString());
       const exchangeRate = +purchaseAmount / +returnedAmount;
       capasitor += +returnedAmount;
-
       account.bondingTokenBalance = toBN(receipt?.returnedAmount.toString());
-
       transactions.push([
         index,
         exchangeRate,
@@ -155,13 +147,10 @@ export function shouldBehaveLikeBondingCurveToken (): void {
 
   it('should make sell order to BondingCurve - makeSellOrder', async function () {
     this.timeout(60 * 60 * 1000);
-
     await advanceTime(10000);
     for (let index = 0; index < this.unnamedAccounts.length / 3; index++) {
       const accountIndex = randomInt(0, this.unnamedAccounts.length - 1);
-
       const account = this.unnamedAccounts[accountIndex];
-
       const sellBondingTokenAmount = Math.round(
         // @ts-expect-error
         account.bondingTokenBalance / 3
@@ -209,8 +198,8 @@ export function shouldBehaveLikeBondingCurveToken (): void {
       const line = infoArray.join(',');
       lineArray.push(line);
     });
+    
     const csvContent = lineArray.join('\n');
-
     writeFileSync('testData.csv', csvContent);
     console.log(
       'using some percentage of individuals, from common-stack, demonstrate various sell orderes'
@@ -256,7 +245,6 @@ export function shouldBehaveLikeBondingCurveToken (): void {
     );
 
     const accounts = [['Addres', 'ETH', 'TOKENS']];
-
     for (let i = 0; i < this.unnamedAccounts.length; i++) {
       const a = this.unnamedAccounts[i];
       // @ts-expect-error
@@ -264,14 +252,12 @@ export function shouldBehaveLikeBondingCurveToken (): void {
       // @ts-expect-error
       accounts.push([a.address, fromWei((await a.getBalance()).toString()), fromWei(a.bondingTokenBalance?.toString())]);
     }
-
     const lineArray: string[] = [];
     accounts.forEach(function (infoArray) {
       const line = infoArray.join(',');
       lineArray.push(line);
     });
     const csvContent = lineArray.join('\n');
-
     writeFileSync('accountsData.csv', csvContent);
   });
 }
