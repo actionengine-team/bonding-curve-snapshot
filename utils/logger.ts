@@ -6,7 +6,7 @@ import { format } from 'winston';
 import winston from 'winston';
 
 process.on('SIGTERM', () => {
-  process.stdout.write(`\n`);
+  process.stdout.write('\n');
   logger.info('received SIGTERM, exiting gracefully');
   process.exit(0);
 });
@@ -28,8 +28,8 @@ export const logger = winston.createLogger({
             : `[${level}][${moment(new Date())
                 .format('YYYYMMDD-HHmmssSS')
                 .toString()}] ${message} ${JSON.stringify(rest)}`;
-        }),
+        })
       ),
-    }),    
+    })
   ],
 });

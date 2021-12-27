@@ -1,5 +1,5 @@
 /*
-  contributions made from Coinbase require remapping the address to a custodial wallet address 
+  contributions made from Coinbase require remapping the address to a custodial wallet address
 */
 export const CEX_OVERRIDES: Record<string, string> = {
   // albatron9000#4542
@@ -11,7 +11,7 @@ export const CEX_OVERRIDES: Record<string, string> = {
   // aliciakatz#6843
   '0xcc458f154221c31f14b03772421837cce2969a3d38f81147927f32ef8ec9b85a':
     '0x599Af7f3Eb2Af4f39A8174f1fab2cca09ff11a5d',
-  // jonathanbroly#4332 
+  // jonathanbroly#4332
   '0x073d9da34276075d7344df9f5b62e1785302b8b7da062efc62e2eec1b214eeb8':
     '0x89C14066d9b643BFF11148ddBCc6c32F8E07C3FA',
   // qasak#4459

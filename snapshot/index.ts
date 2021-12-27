@@ -26,8 +26,8 @@ const process_queue = new PQueue({ concurrency: event_concurrency });
 
 const safe = new ethers.Contract(
   SAFE_ADDRESS,
-  [`event SafeReceived(address indexed sender, uint256 value)`],
-  provider,
+  ['event SafeReceived(address indexed sender, uint256 value)'],
+  provider
 );
 
 type Snapshot = Record<string, ethers.BigNumber>;
@@ -35,7 +35,7 @@ let snapshot: Snapshot;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-function readFromSnapshot(): Snapshot {
+function readFromSnapshot (): Snapshot {
   if (!existsSync(SNAPSHOT_FILENAME)) return {};
   const data = parse(readFileSync(SNAPSHOT_FILENAME), { columns: true }) as {
     sender: string;
@@ -48,24 +48,24 @@ function readFromSnapshot(): Snapshot {
   }, {});
 }
 
-function writeToSnapshot(snapshot: Snapshot) {
+function writeToSnapshot (snapshot: Snapshot) {
   writeFileSync(
     SNAPSHOT_FILENAME,
     stringify(
       Object.keys(snapshot).map((sender) => ({ sender, value: snapshot[sender].toString() })),
       {
         header: true,
-      },
-    ),
+      }
+    )
   );
 }
 
-function getNextBlock() {
+function getNextBlock () {
   if (!existsSync(NEXT_BLOCK_INFO)) return SAFE_DEPLOYED_IN_BLOCK;
   return JSON.parse(readFileSync(NEXT_BLOCK_INFO).toString()).next;
 }
 
-function setNextBlock(next: number) {
+function setNextBlock (next: number) {
   writeFileSync(NEXT_BLOCK_INFO, JSON.stringify({ next }));
 }
 
@@ -89,7 +89,7 @@ process.on('SIGINT', () => {
   process.exit();
 });
 
-async function main() {
+async function main () {
   snapshot = readFromSnapshot();
   verbosity ? logger.info(`Snapshot has ${Object.keys(snapshot).length} entries.`) : null;
 
@@ -116,13 +116,13 @@ async function main() {
       const events = await safe.queryFilter(filter, fromChunkNumber, toChunkNumber);
       verbosity && events.length !== 0
         ? logger.info(
-            `blocks ${fromChunkNumber} => ${toChunkNumber} ` + `contains ${events.length} events`,
-          )
+            `blocks ${fromChunkNumber} => ${toChunkNumber} ` + `contains ${events.length} events`
+        )
         : null;
 
       events.filter(Boolean).forEach((event: ethers.Event) => {
         if (!event.args?.sender || !event.args?.value) {
-          logger.info(`Invalid event??`, event);
+          logger.info('Invalid event??', event);
           return;
         }
 
@@ -132,8 +132,8 @@ async function main() {
         if (CEX_OVERRIDES[event.transactionHash]) {
           logger.info(
             `remapping tx ${event.transactionHash} for ${ethers.utils.formatEther(
-              value,
-            )} ETH from ${event.args.sender} to ${CEX_OVERRIDES[event.transactionHash]}`,
+              value
+            )} ETH from ${event.args.sender} to ${CEX_OVERRIDES[event.transactionHash]}`
           );
         }
 
@@ -151,7 +151,7 @@ async function main() {
     }
   }
 
-  logger.info('writing to snapshot.csv');  
+  logger.info('writing to snapshot.csv');
   writeToSnapshot(snapshot);
 }
 
